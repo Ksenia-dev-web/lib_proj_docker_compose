@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+    web:
+        # dockerfile from LibrarySite catalog
+        build: ./LibrarySite
+        # test server running
+        command: python manage.py runserver 0.0.0.0:8000
+        # where data from LibrarySite are going to be stored
+        volumes:
+                - ./LibrarySite/:/usr/src/LibrarySite/
+        # open port 8000 inside and outside
+        ports:
+                - 8000:8000
+        # file with env for container
+        env_file:
+                - ./.env.dev
+	depends_on:
+                -db
+    db:
+        # image and version of db we are going to use
+        image: postgres:12-alpine
+        # volume and place inside a container
+        volumes:
+            - postgres_volume:/var/lib/postgresql/data/
+        environment:
+        # account data
+            - POSTGRES_USER=django_user
+            - POSTGRES_PASSWORD=django-password
+            - POSTGRES_DB=django_db
+
+volumes:
+    postgres_volume: 
